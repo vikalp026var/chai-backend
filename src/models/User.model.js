@@ -19,13 +19,13 @@ const userSchema = new mongoose.Schema(
             lowercase: true,
             trim: true,
         },
-        fullName: {
+        fullname: {
             type: String,
             required: true,
             trim: true,
             index: true,
         },
-        avtar: {
+        avatar: {
             type: String, //cloudnary url or aws url
             required: true,
         },
@@ -50,14 +50,13 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre('save', async function(next) {
     if(!this.isModified('password')){
-        return next();
+        return;
     }
     this.password = await bcrypt.hash(this.password, 10);
-    next();
 });
 
 userSchema.methods.isPasswordCorrect = async function(password){
-    await bcrypt.compare(password, this.password);
+    return await bcrypt.compare(password, this.password);
 }
 
 userSchema.methods.generateAccessToken = function(){

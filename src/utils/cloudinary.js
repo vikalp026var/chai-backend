@@ -10,14 +10,22 @@ cloudinary.config({
 const uploadCloudinary = async (localFilePath) => {
     try{
         if(!localFilePath) return null;
+        // console.log('Avatar in cloudinary', localFilePath)
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto"
-        })
+        });
         //file has been upload successfully 
-        console.log("file is upload successfully", response.url);
+        // console.log("file is upload successfully", response.url);
+        
+        if(fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
         return response;
     }catch(error){
-        fs.unlinkSync(localFilePath); // remove the locally save file path 
+        console.error("Error uploading to Cloudinary:", error);
+        if(localFilePath && fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
         return null;
     }
 }
